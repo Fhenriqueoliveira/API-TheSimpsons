@@ -9,7 +9,7 @@ routes.get(
   SimpsonMiddleware.validaID,
   SimpsonController.getById
 );
-routes.post("/simpsns", SimpsonController.create);
+routes.post("/simpsons", SimpsonController.create);
 routes.put(
   "/simpsons/:id",
   SimpsonMiddleware.validaID,
@@ -18,7 +18,7 @@ routes.put(
 routes.delete(
   "/simpsons/:id",
   SimpsonMiddleware.validaID,
-  Simpsonontroller.del
+  SimpsonController.del
 );
 routes.get("/filterByName", SimpsonController.filterByName);
 routes.get("/filterAll", SimpsonController.filterAll);
