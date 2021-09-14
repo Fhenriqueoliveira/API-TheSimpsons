@@ -36,7 +36,7 @@ const create = async (req, res) => {
 
   const newSimpson = await new Simpson({
     nome,
-    caracteristica,
+    frase,
     genero,
     imagem,
   });

@@ -1,26 +1,25 @@
-const routes = require("express").Router();
+const mongoose = require("mongoose");
+const Simpson = require("../models/Simpson");
 
-const SimpsonController = require("../controllers/simpsonsController");
-const SimpsonMiddleware = require("../middlewares/simpsonsMiddlewares");
+const validaID = async (req, res, next) => {
+  const { id } = req.params;
 
-routes.get("/simpsons", SimpsonController.getAll);
-routes.get(
-  "/simpsons/:id",
-  SimpsonMiddleware.validaID,
-  SimpsonController.getById
-);
-routes.post("/simpsns", SimpsonController.create);
-routes.put(
-  "/simpsons/:id",
-  SimpsonMiddleware.validaID,
-  SimpsonController.update
-);
-routes.delete(
-  "/simpsons/:id",
-  SimpsonMiddleware.validaID,
-  Simpsonontroller.del
-);
-routes.get("/filterByName", SimpsonController.filterByName);
-routes.get("/filterAll", SimpsonController.filterAll);
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    res.status(400).send({ error: "Id Inválido" });
+    return;
+  }
 
-module.exports = routes;
+  try {
+    const simpson = await Simpson.findById(id);
+    if(!simpson){
+        return res.status(404).send({msgMiddleware: "Personagem não encontrado."})
+    }
+    res.simpson = simpson
+  } catch (err) {
+    return res.status(500).send({error: err})
+  }
+
+  next();
+};
+
+module.exports = { validaID };
