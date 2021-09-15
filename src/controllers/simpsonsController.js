@@ -1,8 +1,12 @@
-const Simpson  = require("../models/Simpson");
+const Simpson= require("../models/Simpson");
 
 const getAll = async (req, res) => {
   try {
     const simpsons = await Simpson.find(); // Promisse
+    if (simpsons.length === 0)
+      return res
+        .status(404)
+        .send({ message: "DOOOO!!! Não existem personagens cadastrados!" });
     return res.send({ simpsons });
   } catch (err) {
     res.status(500).send({ error: err.message });
@@ -15,7 +19,7 @@ const getById = async (req, res) => {
   try {
     const simpson = await Simpson.findById(id);
     if (!simpson) {
-      res.status(404).json({ message: "Não achamos esse amarelo!" });
+      res.status(404).json({ message: "DOOO!!! Personagem não encontrado" });
       return;
     }
     return res.send({ simpson });
@@ -25,18 +29,18 @@ const getById = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const { nome, caracteristica , genero, imagem } = req.body;
+  const { nome, caracteristica, genero, imagem } = req.body;
 
   if (!nome || !caracteristica || !genero || !imagem) {
     res.status(400).send({
-      message: "DOOO!!!! Dados inconpletos, Por favor enviar Nome / Caracteristica / Genero / link da IMG"
+      message: "DOOOO!!!! Você não enviou todos os dados !! desse jeito vou pro MOE",
     });
     return;
   }
 
   const newSimpson = await new Simpson({
     nome,
-    frase,
+    caracteristica,
     genero,
     imagem,
   });
@@ -45,7 +49,7 @@ const create = async (req, res) => {
     await newSimpson.save();
     return res
       .status(201)
-      .send({ message: "UHUUU!!!! Personagem criado com sucesso", newSimpson });
+      .send({ message: "UHUUUU!!! Personagem criado com sucesso", newSimpson});
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -56,19 +60,19 @@ const update = async (req, res) => {
 
   if (!nome || !caracteristica || !genero || !imagem) {
     res.status(400).send({
-      message: " DOOOO!!! Dados inconpletos, Por favor enviar Nome / Caracteristica / Genero / link da IMG"
+      message: "DOOOO!!!! Você não enviou todos os dados !! desse jeito vou pro MOE",
     });
     return;
   }
 
   res.simpson.nome = nome;
-  res.simpson.identidade = identidade;
+  res.simpson.caracteristica = caracteristica;
   res.simpson.genero = genero;
   res.simpson.imagem = imagem;
 
   try {
     await res.simpson.save();
-    res.send({ message: "UHUUU!!! Personagem alterado com sucesso!" });
+    res.send({ message: "UHUUUUUUU!!!  Personagem alterado com sucesso!" });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -77,7 +81,7 @@ const update = async (req, res) => {
 const del = async (req, res) => {
   try {
     await res.simpson.remove();
-    return res.send({ message: "UHUUUU!!!  Personagem removido com sucesso!" });
+    return res.send({ message: "Personagem removido com sucesso!" });
   } catch (err) {
     return res.status(500).send({ erro: err.message });
   }
@@ -98,15 +102,15 @@ const filterByName = async (req, res) => {
 };
 
 const filterAll = async (req, res) => {
-  const { nome, caracteristica, genero } = req.query;
+  let { nome, genero } = req.query;
 
-    
+  !nome ? (nome = "") : (nome = nome);
+  !genero ? (genero = "") : (genero = genero);
 
   try {
     const simpsons = await Simpson.find({
-      nome: { $regex: `${nome}` },
-      caracteristica: { $regex: `${caracteristica}` },
-      genero: { $regex: `${genero}` }
+      nome: { $regex: `${nome}`, $options: 'i' },
+      genero: { $regex: `${genero}`, $options: 'i'},
     });
 
     if (simpsons.length === 0)
