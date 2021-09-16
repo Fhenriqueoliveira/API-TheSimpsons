@@ -88,13 +88,16 @@ const del = async (req, res) => {
 };
 
 const filterByName = async (req, res) => {
-  const nome = req.query.nome;
+  let {nome} = req.query;  
   if (!nome) {
     res.status(400).send({ erro: "Parametro não recebido" });
     return;
   }
   try {
     const simpsons = await Simpson.find({ nome: { $regex: `${nome}` } });
+    if (simpsons.length ===0){
+      return res.status(404).send({ error: `Personagem não encontrado`})
+    };
     return res.send({ simpsons });
   } catch (err) {
     return res.status(500).send({ error: err.message });

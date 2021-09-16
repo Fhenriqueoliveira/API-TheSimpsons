@@ -10,8 +10,7 @@ routes.get(
   SimpsonController.getById
 );
 routes.post("/simpsons", SimpsonController.create);
-routes.put(
-  "/simpsons/:id",
+routes.put( "/simpsons/:id",
   SimpsonMiddleware.validaID,
   SimpsonController.update
 );
